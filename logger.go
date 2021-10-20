@@ -1,55 +1,59 @@
-package pq_logger
+package hygogger
 
 import (
 	"fmt"
+	"github.com/hyhilman/hygogger/outputs"
 	"log"
 	"os"
-	"pq-logger/outputs"
 )
 
 var pool []logger
 
-type msgHandler func(string) error
+var MessagesHandlerFactory func(output outputs.Output, level Level) MessageHandler
+
+type logger struct {
+	debug MessageHandler
+	info  MessageHandler
+	warn  MessageHandler
+	error MessageHandler
+	fatal MessageHandler
+	panic MessageHandler
+}
+
+type MessageHandler func(string) error
 
 var exit = func(code interface{}) {
 	os.Exit(code.(int))
 }
 
-var msgHandlerFactory = func(output outputs.Output, level Level) msgHandler {
-	l := log.New(output, fmt.Sprintf("[%s]", level), log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
-	return func(msg string) (err error) {
-		return l.Output(3, msg)
-	}
-}
-
-type logger struct {
-	debug msgHandler
-	info  msgHandler
-	warn  msgHandler
-	error msgHandler
-	fatal msgHandler
-	panic msgHandler
-}
-
 func NewLogger(output outputs.Output, level Level) {
+	if MessagesHandlerFactory == nil {
+		MessagesHandlerFactory = func(output outputs.Output, level Level) MessageHandler {
+			l := log.New(output, fmt.Sprintf("[%s]", level), log.Ldate|log.Ltime|log.Lmicroseconds|log.Llongfile)
+			return func(msg string) (err error) {
+				return l.Output(3, msg)
+			}
+		}
+	}
+
 	l := logger{}
 
 	switch level {
 	case DebugLevel:
-		l.debug = msgHandlerFactory(output, DebugLevel)
+		l.debug = MessagesHandlerFactory(output, DebugLevel)
 		fallthrough
 	case InfoLevel:
-		l.info = msgHandlerFactory(output, InfoLevel)
+		l.info = MessagesHandlerFactory(output, InfoLevel)
 		fallthrough
 	case WarnLevel:
-		l.warn = msgHandlerFactory(output, WarnLevel)
+		l.warn = MessagesHandlerFactory(output, WarnLevel)
 		fallthrough
 	case ErrorLevel:
-		l.error = msgHandlerFactory(output, ErrorLevel)
+		l.error = MessagesHandlerFactory(output, ErrorLevel)
 		fallthrough
 	default:
-		l.fatal = msgHandlerFactory(output, FatalLevel)
-		l.panic = msgHandlerFactory(output, PanicLevel)
+		l.fatal = MessagesHandlerFactory(output, FatalLevel)
+		l.panic = MessagesHandlerFactory(output, PanicLevel)
 	}
 
 	pool = append(pool, l)

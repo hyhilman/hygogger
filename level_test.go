@@ -1,4 +1,4 @@
-package pq_logger
+package hygogger
 
 import (
 	"fmt"

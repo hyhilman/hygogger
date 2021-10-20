@@ -1,4 +1,4 @@
-module pq-logger
+module github.com/hyhilman/hygogger
 
 go 1.14
 

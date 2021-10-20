@@ -1,14 +1,14 @@
-package pq_logger
+package hygogger
 
 import (
-	"pq-logger/outputs"
+	"github.com/hyhilman/hygogger/outputs"
 	"testing"
 	"time"
 )
 
 var console = &outputs.ConsoleOutput{}
 var file = &outputs.FileOutput{
-	Path:     "/tmp/pq-logger/test.log",
+	Path:     "/tmp/hygogger/test.log",
 	Rotation: time.Second * 100,
 }
 

@@ -6,7 +6,7 @@ import (
 )
 
 func TestFileOutput(t *testing.T) {
-	var testDir = "/tmp/pq-logger"
+	var testDir = "/tmp/hygogger"
 
 	var ff = []Output{
 		&FileOutput{
@@ -42,7 +42,7 @@ func TestFileOutput(t *testing.T) {
 }
 
 func TestFileOutput_Invalid(t *testing.T) {
-	var testDir = "/root/pq-logger"
+	var testDir = "/root/hygogger"
 
 	var ff = []Output{
 		&FileOutput{

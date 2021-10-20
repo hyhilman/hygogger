@@ -1,4 +1,4 @@
-package pq_logger
+package hygogger
 
 type LevelString string
 type Level uint8

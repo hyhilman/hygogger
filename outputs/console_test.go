@@ -6,7 +6,7 @@ import (
 )
 
 func TestConsoleOutput(t *testing.T) {
-	var testDir = "/tmp/pq-logger"
+	var testDir = "/tmp/hygogger"
 
 	var ff = []Output{
 		&ConsoleOutput{},
